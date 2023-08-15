@@ -8,7 +8,6 @@ export default function Home() {
   O priority que existe em <Image /> significa:
   Nextjs, por favor, priorize o carregamento dessa imagem
 */
-
   return (
       <div className={styles.container}>
         <Head>
@@ -28,6 +27,14 @@ export default function Home() {
             Sistema feito para você organizar <br />
             seus estudos e terefas
           </h1>
+          <div className={styles.infoContent}>
+              <section className={styles.box}>
+                <span>+12 posts</span>
+              </section>
+              <section className={styles.box}>
+                <span>+90 comentários</span>
+              </section>
+          </div>
         </main>
       </div>
     );

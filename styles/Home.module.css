@@ -1,7 +1,9 @@
+
+/* height: calc(100vh-76px); -> esse -76px é referente ao header.*/
 .container {
     background-color: #0f0f0f;
     width: 100%;
-    height: 100vh;
+    height: calc(100vh-76px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,3 +35,59 @@
     line-height: 150%;
   }
   
+  /* display: flex -> é o que faz ficar ao lado do outro 
+     justify-content: space-around; -> espaçamento entre os itens
+  */
+  .infoContent{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  /*
+    padding: 14px 44px; -> 14px em cima e em baixo/ 44px nos lados
+    transition: transform 0.4s; -> quando houver o transform: scale(1.08); 
+    demorar apenas 0.4s para ocorrer
+    transform 0.4s; fica em .box:hover{}
+
+  */
+
+  .box {
+    background-color: #fafafa;
+    padding: 14px 44px;
+    border-radius: 4px;
+    transition: transform 0.4s;
+  }
+
+  /*
+    transform: scale(1.08); -> quando passar o mouse houver um realce
+  */
+  .box:hover{
+    transform: scale(1.08);
+  }
+
+  /* Quando tiver no máximo 580px, vou usar a estilização que estiver aí dentro.
+    Mais que 580px, usar o restante de cima.
+
+    .infoContent {
+      flex-direction: column;
+    } -> isso vai deixar os dois blocos em cima e em baixo
+  */
+  @media screen and (max-width: 580px){
+    .hero {
+      max-width: 80%;
+    }
+
+    .title {
+      font-size: 24px;
+    }
+
+    .infoContent {
+      flex-direction: column;
+    }
+
+    .box {
+      width: 80%;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+  }
