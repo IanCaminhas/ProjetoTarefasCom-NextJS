@@ -7,26 +7,47 @@ import {Textarea} from '../../components/textarea';
 import {FiShare2 } from 'react-icons/fi'
 import {FaTrash} from 'react-icons/fa'
 
-export default function Dashboard() {
-    const [input, setInput] = useState("")
+import {db} from '../../services/firebaseConnection';
+import {addDoc, collection} from 'firebase/firestore';
+
+interface HomeProps {
+    user: {
+        email: string;
+    }
+}
+
+export default function Dashboard({ user }: HomeProps) {
+    const [input, setInput] = useState("");
     //estado que controla se a tarefa é pública ou não... Marquei é true, se não marquei é false
     //Como ele começa desmarcado, o valor inicial do estado é false
-    const [publicTask, setPublicTask] = useState(false)
+    const [publicTask, setPublicTask] = useState(false);
 
     function handleChangePublic(event: ChangeEvent<HTMLInputElement>) {
         /*para ver a tarefa está publica ou não
         //console.log(event.target.checked) */
         setPublicTask(event.target.checked)
-        
     }
 
-    function handleRegisterTask(event: FormEvent) {
+   async function handleRegisterTask(event: FormEvent) {
         //Para não dar o reload na página... Estou evitando o comportamento padrão
         event.preventDefault();
         //estou barrando o usuario para não cadastrar um input vazio
         if(input === '') return;
 
-        alert("TESTE");
+        //alert("TESTE");
+        try {
+            await addDoc(collection(db, "tarefas"), {
+                tarefa: input,
+                created: new Date(),
+                user: user?.email,
+                public: publicTask //essa tarefa está publica ?
+            })
+            //Quando cadastrar, limpar os campos
+            setInput("")
+            setPublicTask(false)
+        }catch(err) {
+            console.log(err)
+        }
     }
 
     /*Essa é uma solução que poderia ser usada: quando o user carregar o componente na tela, fazemos um 
@@ -125,7 +146,13 @@ export const getServerSideProps: GetServerSideProps = async ({req}) => {
             }
         }
     }
+    //Quando a sessao for finalizada, quero apenas o e-mail.
+    //Esse e-mail vai ser recebido em export default function Dashboard({ user }: HomeProps) 
     return {
-        props:{},
+        props:{
+            user: {
+                email: session?.user?.email
+            }
+        },
     }
 }
