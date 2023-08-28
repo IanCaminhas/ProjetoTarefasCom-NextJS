@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+import { ChangeEvent, FormEvent, useState } from 'react';
 import styles from './styles.module.css'
 import Head from 'next/head'
 import { getSession } from "next-auth/react";
@@ -7,6 +8,26 @@ import {FiShare2 } from 'react-icons/fi'
 import {FaTrash} from 'react-icons/fa'
 
 export default function Dashboard() {
+    const [input, setInput] = useState("")
+    //estado que controla se a tarefa é pública ou não... Marquei é true, se não marquei é false
+    //Como ele começa desmarcado, o valor inicial do estado é false
+    const [publicTask, setPublicTask] = useState(false)
+
+    function handleChangePublic(event: ChangeEvent<HTMLInputElement>) {
+        /*para ver a tarefa está publica ou não
+        //console.log(event.target.checked) */
+        setPublicTask(event.target.checked)
+        
+    }
+
+    function handleRegisterTask(event: FormEvent) {
+        //Para não dar o reload na página... Estou evitando o comportamento padrão
+        event.preventDefault();
+        //estou barrando o usuario para não cadastrar um input vazio
+        if(input === '') return;
+
+        alert("TESTE");
+    }
 
     /*Essa é uma solução que poderia ser usada: quando o user carregar o componente na tela, fazemos um 
     useEffect(()), chamar o hook do useSession e verificar se
@@ -17,6 +38,17 @@ export default function Dashboard() {
     /*
         Head é para alterar o title da aba
     */
+
+        /*
+            onChange={(event:ChangeEvent<HTMLTextAreaElement>) => setInput(event.target.value)}/> é para pegar
+            o que o user digitou. Para compilar, devo informar que é do tipo HTMLTextAreaElement... Coloquei o 
+            publicTask dentro de checked para determinar se está marcado ou não...
+        */
+
+            /*
+                Se eu quiser deixar o checkbox sempre marcado, faço checked={true}... fazendo assim, 
+                nem consigo desmarcar 
+            */
     return (
         <div className={styles.container}>
             <Head>
@@ -27,12 +59,17 @@ export default function Dashboard() {
                 <section className={styles.content}>
                     <div className={styles.contentForm}>
                         <h1 className={styles.title}>Qual sua tarefa ?</h1>
-                        <form>
-                            <Textarea placeholder="Digite qual sua tarefa..." />
+                        <form onSubmit={handleRegisterTask}>
+                            <Textarea placeholder="Digite qual sua tarefa..."
+                             value={input}
+                             onChange={(event:ChangeEvent<HTMLTextAreaElement>) => setInput(event.target.value)}/>
                             <div className={styles.checkboxArea}>
                                 <input 
                                     type="checkbox"
                                     className={styles.checkbox}
+                                    checked={publicTask}
+                                    onChange={handleChangePublic}
+                                    
                                 />
                                 <label>Deixar tarefa pública</label>
                             </div>
@@ -64,9 +101,7 @@ export default function Dashboard() {
                         </div>
                     </article>
                 </section>
-
             </main>
-            
         </div>
     )
 }
