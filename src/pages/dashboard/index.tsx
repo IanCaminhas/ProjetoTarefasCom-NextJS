@@ -13,8 +13,11 @@ import {
     query,
     orderBy,
     where,
-    onSnapshot
+    onSnapshot,
+    doc,
+    deleteDoc
 } from 'firebase/firestore';
+import Link from 'next/link'
 
 interface HomeProps {
     user: {
@@ -95,6 +98,20 @@ export default function Dashboard({ user }: HomeProps) {
         }
     }
 
+    async function handleShare(id: string) {
+        //console.log(id)
+        await navigator.clipboard.writeText(
+            `${process.env.NEXT_PUBLIC_URL}/task/${id}`
+        )
+        alert("URL copiada co sucesso!")
+    }
+
+    async function handleDeleteTask(id: string) {
+        const docRef = doc(db, "tarefas", id)
+        await deleteDoc(docRef)
+    }
+
+
     /*Essa é uma solução que poderia ser usada: quando o user carregar o componente na tela, fazemos um 
     useEffect(()), chamar o hook do useSession e verificar se
     tem usuário logado...
@@ -128,6 +145,17 @@ export default function Dashboard({ user }: HomeProps) {
                             </button>
                         </div>
                          )}
+            
+            Se o a tarefa for pública(item.public), envolve ela num Link. Esse Link vai mostrar os detalhes da tarefa
+            Se não, mostra a tarefa sem o link... Quando clicar, o mouse não vai ser alterado
+             {item.public ? (
+                                <Link href={`/task/${item.id}`}>
+                                     <p>{item.tarefa}</p>
+                                </Link>
+                            ): (
+                                <p>{item.tarefa}</p>
+                            )}
+
         */
 
     return (
@@ -169,7 +197,7 @@ export default function Dashboard({ user }: HomeProps) {
                          {item.public && (
                             <div className={styles.tagContainer}>
                             <label className={styles.tag}>PUBLICO</label>
-                            <button className={styles.sharedButton}> 
+                            <button className={styles.sharedButton} onClick={()=>handleShare(item.id)}> 
                                 <FiShare2
                                     size={22}
                                     color="#3183ff"
@@ -178,8 +206,14 @@ export default function Dashboard({ user }: HomeProps) {
                         </div>
                          )}
                          <div className={styles.taskContent}>
-                             <p>{item.tarefa}</p>
-                             <button className={styles.trashButton}>
+                            {item.public ? (
+                                <Link href={`/task/${item.id}`}>
+                                     <p>{item.tarefa}</p>
+                                </Link>
+                            ): (
+                                <p>{item.tarefa}</p>
+                            )}
+                             <button className={styles.trashButton} onClick={() => handleDeleteTask(item.id)}>
                                  <FaTrash size={24} color="#ea3140" />
                              </button>
                          </div>
