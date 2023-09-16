@@ -3,21 +3,45 @@ import styles from './styles.module.css'
 import { GetServerSideProps } from 'next'
 import {db} from '../../services/firebaseConnection'
 import {doc, collection, getDoc,query, where} from 'firebase/firestore'
+import {Textarea} from '../../components/textarea'
 
-export default function Task() {
-    return (
-        <diV className={styles.container}>
-            <Head>
-                <title>Detalhes da tarefa</title>
-            </Head>
-
-            <main className={styles.main}>
-                <h1>Tarefas</h1>
-
-            </main>
-        </diV>
-    )
+interface TaskProps {
+    item: {
+        tarefa: string;
+        created: string;
+        public: boolean;
+        user: string;
+        taskId: string;
+    }
 }
+/*Não é interessante deixar o {item} sem tipagem.
+    Quando passar o mouse, eu visualizar as propriedades do {item}
+*/
+export default function Task({ item }: TaskProps) {
+    return (
+      <div className={styles.container}>
+        <Head>
+          <title>Tarefa - Detalhes da tarefa</title>
+        </Head>
+  
+        <main className={styles.main}>
+          <h1>Tarefa</h1>
+          <article className={styles.task}>
+            <p>{item.tarefa}</p>
+          </article>
+        </main>
+  
+        <section className={styles.commentsContainer}>
+          <h2>Deixar comentário</h2>
+  
+          <form>
+            <Textarea placeholder="Digite seu comentário..." />
+            <button className={styles.button}>Enviar comentário</button>
+          </form>
+        </section>
+      </div>
+    );
+  }
 
 /* Revisão: tudo isso aqui é carregado no lado do servidor.
 Passamos primeiro no servidor, pega-se o id. Depois é passado para o componente.
@@ -64,7 +88,7 @@ export const getServerSideProps: GetServerSideProps = async ({params}) =>{
         console.log(snapshot.data())
     */
 
-    //Preciso mandar os dados para o componente formatados
+    //Preciso mandar os dados formatados para o componente 
     const milliseconds = snapshot.data()?.created?.seconds * 10007
     const task = {
         tarefa: snapshot.data()?.tarefa,
@@ -82,12 +106,13 @@ export const getServerSideProps: GetServerSideProps = async ({params}) =>{
             user: 'caminhasian@gmail.com',
             taskId: 'AUSp0DkLZwiGRcBNVfGR'
         }
-          console.log(task)
+        console.log(task)
     */
-  
-    
+
     return {
-        props:{}
+        props:{
+            item: task,
+        }
     }
 
 }
