@@ -155,7 +155,6 @@ export default function Dashboard({ user }: HomeProps) {
                             ): (
                                 <p>{item.tarefa}</p>
                             )}
-
         */
 
     return (
